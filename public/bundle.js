@@ -464,7 +464,7 @@ const filmListMostCommentedTitle = `<h2 class="films-list__title">Most commented
 const filmListContainerMostCommented = document.createElement(`div`);
 const body = document.querySelector(`body`);
 
-const addComponent = function (where, what) {
+const addComponent = (where, what) => {
   where.insertAdjacentHTML(`beforeend`, what);
 };
 
