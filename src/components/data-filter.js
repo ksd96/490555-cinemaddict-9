@@ -1,4 +1,4 @@
-import {arrayFilms} from '../main.js';
+import {arrayFilms} from './array-films.js';
 
 
 const watchlistCount = () => {

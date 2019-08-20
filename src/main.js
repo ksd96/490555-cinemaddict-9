@@ -5,12 +5,13 @@ import {makeElementNavigation} from './components/navigation.js';
 import {getElementNavigation} from './components/data-filter.js';
 import {getElementSort} from './components/sort.js';
 import {makeFilm} from './components/film-card.js';
-import {getFilm} from './components/data-card.js';
 import {getElementShowMore} from './components/button-show-more.js';
 import {getPopup} from './components/data-popup.js';
 import {makePopup} from './components/film-details.js';
 import {getComment} from './components/data-comments.js';
 import {makeComment} from './components/film-details-comments.js';
+import {arrayFilms} from './components/array-films.js';
+import {totalCard} from './components/array-films.js';
 
 
 const header = document.querySelector(`.header`);
@@ -28,18 +29,9 @@ const filmListContainerMostCommented = document.createElement(`div`);
 const body = document.querySelector(`body`);
 const navigation = document.createElement(`nav`);
 const footerCount = document.querySelector(`.footer__statistics`);
-const totalCard = 40;
 
 const addComponent = (where, what) => {
   where.insertAdjacentHTML(`beforeend`, what);
-};
-
-const getArray = (count, get) => {
-  const arr = new Array(count)
-  .fill(``)
-  .map(get);
-
-  return arr;
 };
 
 const renderFilms = (where, array, start, end, make) => {
@@ -91,7 +83,6 @@ addComponent(sectionFilmsList, filmListTitle);
 
 filmListContainer.classList.add(`films-list__container`);
 sectionFilmsList.appendChild(filmListContainer);
-const arrayFilms = getArray(totalCard, getFilm);
 renderFilms(filmListContainer, arrayFilms, 0, 5, makeFilm);
 renderFilms(filmListContainerTopRated, arrayFilms, 0, 2, makeFilm);
 renderFilms(filmListContainerMostCommented, arrayFilms, 2, 4, makeFilm);
@@ -126,5 +117,3 @@ let renderEnd = 5;
 load.addEventListener(`click`, makeLoadMore);
 
 footerCount.innerHTML = `<p>${arrayFilms.length} movies inside</p>`;
-
-export {arrayFilms};
