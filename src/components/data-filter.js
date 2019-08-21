@@ -1,6 +1,5 @@
 import {arrayFilms} from './array-films.js';
 
-
 const watchlistCount = () => {
   const arr = [];
   for (const value of arrayFilms) {
