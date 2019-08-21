@@ -40,7 +40,6 @@ export const getElementNavigation = () => ([
   },
   {
     title: `Watchlist`,
-    // eslint-disable-next-line no-undef
     count: `<span class="main-navigation__item-count">${watchlistCount().length}</span>`,
     tag: `watchlist`,
     classList: ``,

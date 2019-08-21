@@ -1,18 +1,17 @@
 import {historyCount} from './data-filter.js';
 
-// eslint-disable-next-line consistent-return
-const numberWatched = () => {
-  if (historyCount().length === 0) {
-    return ``;
-  } else if (historyCount().length >= 1 && historyCount().length <= 10) {
-    return `Novice`;
-  } else if (historyCount().length >= 11 && historyCount().length <= 20) {
-    return `Fan`;
-  } else if (historyCount().length >= 21) {
-    return `Movie buff`;
-  }
-};
+let numberWatched;
+
+if (historyCount().length === 0) {
+  numberWatched = ``;
+} else if (historyCount().length >= 1 && historyCount().length <= 10) {
+  numberWatched = `Fan`;
+} else if (historyCount().length >= 11 && historyCount().length <= 20) {
+  numberWatched = `Fan`;
+} else if (historyCount().length >= 21) {
+  numberWatched = `Movie buff`;
+}
 
 export const getProfile = () => ({
-  rank: numberWatched(),
+  rank: numberWatched,
 });
