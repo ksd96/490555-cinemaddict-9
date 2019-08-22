@@ -1,10 +1,18 @@
 import {getElementSearch} from './components/search.js';
-import {getElementProfile} from './components/profile.js';
-import {getElementNavigation} from './components/navigation.js';
+import {makeElementProfile} from './components/profile.js';
+import {getProfile} from './components/data-profile.js';
+import {makeElementNavigation} from './components/navigation.js';
+import {getElementNavigation} from './components/data-filter.js';
 import {getElementSort} from './components/sort.js';
-import {getElementCard} from './components/film-card.js';
+import {makeFilm} from './components/film-card.js';
 import {getElementShowMore} from './components/button-show-more.js';
-import {getElementFilmDetails} from './components/film-details.js';
+import {getPopup} from './components/data-popup.js';
+import {makePopup} from './components/film-details.js';
+import {getComment} from './components/data-comments.js';
+import {makeComment} from './components/film-details-comments.js';
+import {arrayFilms} from './components/array-films.js';
+import {totalCard} from './components/array-films.js';
+
 
 const header = document.querySelector(`.header`);
 const main = document.querySelector(`.main`);
@@ -19,15 +27,50 @@ const sectionFilmListMostCommented = document.createElement(`section`);
 const filmListMostCommentedTitle = `<h2 class="films-list__title">Most commented</h2>`;
 const filmListContainerMostCommented = document.createElement(`div`);
 const body = document.querySelector(`body`);
+const navigation = document.createElement(`nav`);
+const footerCount = document.querySelector(`.footer__statistics`);
 
 const addComponent = (where, what) => {
   where.insertAdjacentHTML(`beforeend`, what);
 };
 
+const renderFilms = (where, array, start, end, make) => {
+  where.insertAdjacentHTML(`beforeend`, array.slice(start, end).map(make).join(``));
+};
+
+const renderFilters = (where, get, make) => {
+  for (const value of get) {
+    const getF = () => (value);
+    where.insertAdjacentHTML(`beforeend`, new Array(1)
+    .fill(``)
+    .map(getF)
+    .map(make)
+    .join(``));
+  }
+};
+
+const renderElement = (where, count, get, make) => {
+  where.insertAdjacentHTML(`beforeend`, new Array(count)
+  .fill(``)
+  .map(get)
+  .map(make)
+  .join(``));
+};
+
+const makeLoadMore = () => {
+  const number = 5;
+
+  renderFilms(filmListContainer, arrayFilms, renderStart + number, renderEnd + number, makeFilm);
+  renderStart += number;
+  renderEnd += number;
+  if (renderEnd >= totalCard) {
+    load.classList.add(`visually-hidden`);
+  }
+};
 
 addComponent(header, getElementSearch());
-addComponent(header, getElementProfile());
-addComponent(main, getElementNavigation());
+navigation.classList.add(`main-navigation`);
+main.appendChild(navigation);
 addComponent(main, getElementSort());
 
 sectionFilms.classList.add(`films`);
@@ -40,12 +83,14 @@ addComponent(sectionFilmsList, filmListTitle);
 
 filmListContainer.classList.add(`films-list__container`);
 sectionFilmsList.appendChild(filmListContainer);
-
-addComponent(filmListContainer, getElementCard(`The Dance of Life`, `8.3`, `1929`, `1h 55m`, `Musical`, `the-dance-of-life.jpg`, `Burlesque comic Ralph "Skid" Johnson (Skelly), and specialty dancer Bonny Lee King (Carroll), end up together on a cold, rainy night at a tr…`, 5));
-addComponent(filmListContainer, getElementCard(`Sagebrush Trail`, `3.2`, `1933`, `54m`, `Western`, `sagebrush-trail.jpg`, `Sentenced for a murder he did not commit, John Brant escapes from prison determined to find the real killer. By chance Brant's narrow escap…`, 89));
-addComponent(filmListContainer, getElementCard(`The Man with the Golden Arm`, `9.0`, `1955`, `1h 59m`, `Drama`, `the-man-with-the-golden-arm.jpg`, `Frankie Machine (Frank Sinatra) is released from the federal Narcotic Farm in Lexington, Kentucky with a set of drums and a new outlook on…`, 18));
-addComponent(filmListContainer, getElementCard(`Santa Claus Conquers the Martians`, `2.3`, `1964`, `1h 21m`, `Comedy`, `santa-claus-conquers-the-martians.jpg`, `The Martians Momar ("Mom Martian") and Kimar ("King Martian") are worried that their children Girmar ("Girl Martian") and Bomar ("Boy Marti…`, 465));
-addComponent(filmListContainer, getElementCard(`Popeye the Sailor Meets Sindbad the Sailor`, `6.3`, `1936`, `16m`, `Cartoon`, `popeye-meets-sinbad.png`, `In this short, Sindbad the Sailor (presumably Bluto playing a "role") proclaims himself, in song, to be the greatest sailor, adventurer and…`, 18));
+renderFilms(filmListContainer, arrayFilms, 0, 5, makeFilm);
+renderFilms(filmListContainerTopRated, arrayFilms, 0, 2, makeFilm);
+renderFilms(filmListContainerMostCommented, arrayFilms, 2, 4, makeFilm);
+renderFilters(navigation, getElementNavigation(), makeElementNavigation);
+renderElement(header, 1, getProfile, makeElementProfile);
+renderElement(body, 1, getPopup, makePopup);
+const commentsList = document.querySelector(`.film-details__comments-list`);
+renderElement(commentsList, 4, getComment, makeComment);
 
 addComponent(sectionFilmsList, getElementShowMore());
 
@@ -57,8 +102,6 @@ addComponent(sectionFilmListTopRated, filmListTopRatedTitle);
 filmListContainerTopRated.classList.add(`films-list__container`);
 sectionFilmListTopRated.appendChild(filmListContainerTopRated);
 
-addComponent(filmListContainerTopRated, getElementCard(`The Man with the Golden Arm`, `9.0`, `1955`, `1h 59m`, `Drama`, `the-man-with-the-golden-arm.jpg`, `Frankie Machine (Frank Sinatra) is released from the federal Narcotic Farm in Lexington, Kentucky with a set of drums and a new outlook on…`, 18));
-addComponent(filmListContainerTopRated, getElementCard(`The Great Flamarion`, `8.9`, `1945`, `1h 18m`, `Mystery`, `the-great-flamarion.jpg`, `The film opens following a murder at a cabaret in Mexico City in 1936, and then presents the events leading up to it in flashback. The Grea…`, 12));
 
 sectionFilmListMostCommented.classList.add(`films-list--extra`);
 sectionFilms.appendChild(sectionFilmListMostCommented);
@@ -68,7 +111,9 @@ addComponent(sectionFilmListMostCommented, filmListMostCommentedTitle);
 filmListContainerMostCommented.classList.add(`films-list__container`);
 sectionFilmListMostCommented.appendChild(filmListContainerMostCommented);
 
-addComponent(filmListContainerMostCommented, getElementCard(`Santa Claus Conquers the Martians`, `2.3`, `1964`, `1h 21m`, `Comedy`, `santa-claus-conquers-the-martians.jpg`, `The Martians Momar ("Mom Martian") and Kimar ("King Martian") are worried that their children Girmar ("Girl Martian") and Bomar ("Boy Marti…`, 465));
-addComponent(filmListContainerMostCommented, getElementCard(`Made for Each Other`, `5.6`, `1939`, `1h 32m`, `Comedy`, `made-for-each-other.png`, `John Mason (James Stewart) is a young, somewhat timid attorney in New York City. He has been doing his job well, and he has a chance of bei…`, 56));
+const load = document.querySelector(`.films-list__show-more`);
+let renderStart = 0;
+let renderEnd = 5;
+load.addEventListener(`click`, makeLoadMore);
 
-addComponent(body, getElementFilmDetails);
+footerCount.innerHTML = `<p>${arrayFilms.length} movies inside</p>`;
