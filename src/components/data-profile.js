@@ -1,6 +1,6 @@
-import {historyCount} from './data-filter.js';
+import {historyCount} from './data-navigation.js';
 
-let numberWatched;
+export let numberWatched;
 
 if (historyCount().length >= 1 && historyCount().length <= 10) {
   numberWatched = `Novice`;
@@ -12,6 +12,3 @@ if (historyCount().length >= 1 && historyCount().length <= 10) {
   numberWatched = ``;
 }
 
-export const getProfile = () => ({
-  rank: numberWatched,
-});

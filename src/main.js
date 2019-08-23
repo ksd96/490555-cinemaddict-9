@@ -1,17 +1,17 @@
 import {getElementSearch} from './components/search.js';
-import {makeElementProfile} from './components/profile.js';
-import {getProfile} from './components/data-profile.js';
-import {makeElementNavigation} from './components/navigation.js';
-import {getElementNavigation} from './components/data-filter.js';
+import {Profile} from './components/profile.js';
+import {numberWatched} from './components/data-profile.js';
+import {Navigation} from './components/navigation.js';
+import {arrayNavigation} from './components/data-navigation.js';
 import {getElementSort} from './components/sort.js';
-import {makeFilm} from './components/film-card.js';
+import {Film} from './components/film-card.js';
 import {getElementShowMore} from './components/button-show-more.js';
-import {getPopup} from './components/data-popup.js';
-import {makePopup} from './components/film-details.js';
-import {getComment} from './components/data-comments.js';
-import {makeComment} from './components/film-details-comments.js';
+import {FilmDetails} from './components/film-details.js';
+import {arrayComents} from './components/data-comments.js';
+import {Comments} from './components/film-details-comments.js';
 import {arrayFilms} from './components/array-films.js';
 import {totalCard} from './components/array-films.js';
+import {Position, render, unrender} from './components/utils.js';
 
 
 const header = document.querySelector(`.header`);
@@ -34,38 +34,80 @@ const addComponent = (where, what) => {
   where.insertAdjacentHTML(`beforeend`, what);
 };
 
-const renderFilms = (where, array, start, end, make) => {
-  where.insertAdjacentHTML(`beforeend`, array.slice(start, end).map(make).join(``));
-};
-
-const renderFilters = (where, get, make) => {
-  for (const value of get) {
-    const getF = () => (value);
-    where.insertAdjacentHTML(`beforeend`, new Array(1)
-    .fill(``)
-    .map(getF)
-    .map(make)
-    .join(``));
-  }
-};
-
-const renderElement = (where, count, get, make) => {
-  where.insertAdjacentHTML(`beforeend`, new Array(count)
-  .fill(``)
-  .map(get)
-  .map(make)
-  .join(``));
-};
-
 const makeLoadMore = () => {
   const number = 5;
 
-  renderFilms(filmListContainer, arrayFilms, renderStart + number, renderEnd + number, makeFilm);
+  arrayFilms.slice(renderStart + number, renderEnd + number).forEach((filmMock) => renderFilmCard(filmMock, filmListContainer));
   renderStart += number;
   renderEnd += number;
   if (renderEnd >= totalCard) {
     load.classList.add(`visually-hidden`);
   }
+};
+
+const renderProfile = (profileMock) => {
+  const profile = new Profile(profileMock);
+  render(header, profile.getElement(), Position.BEFOREEND);
+};
+
+const renderNavigation = (navMock) => {
+  const nav = new Navigation(navMock);
+  render(navigation, nav.getElement(), Position.BEFOREEND);
+};
+
+let commentsList = null;
+const renderComment = (commentMock) => {
+  const comment = new Comments(commentMock);
+  commentsList = document.querySelector(`.film-details__comments-list`);
+  render(commentsList, comment.getElement(), Position.BEFOREEND);
+};
+
+
+const renderFilmCard = (filmMock, where) => {
+  const film = new Film(filmMock);
+  const filmDetails = new FilmDetails(filmMock);
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      unrender(filmDetails.getElement());
+      commentsList.innerHTML = ``;
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  film.getElement()
+    .querySelector(`img`)
+    .addEventListener(`click`, () => {
+      render(body, filmDetails.getElement(), Position.BEFOREEND);
+      arrayComents.forEach((commentMock) => renderComment(commentMock));
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
+  film.getElement()
+    .querySelector(`.film-card__title`)
+    .addEventListener(`click`, () => {
+      render(body, filmDetails.getElement(), Position.BEFOREEND);
+      arrayComents.forEach((commentMock) => renderComment(commentMock));
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
+  film.getElement()
+    .querySelector(`.film-card__comments`)
+    .addEventListener(`click`, () => {
+      render(body, filmDetails.getElement(), Position.BEFOREEND);
+      arrayComents.forEach((commentMock) => renderComment(commentMock));
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
+  filmDetails.getElement()
+    .querySelector(`.film-details__close-btn`)
+    .addEventListener(`click`, () => {
+      unrender(filmDetails.getElement());
+      commentsList.innerHTML = ``;
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
+
+  render(where, film.getElement(), Position.BEFOREEND);
 };
 
 addComponent(header, getElementSearch());
@@ -83,14 +125,11 @@ addComponent(sectionFilmsList, filmListTitle);
 
 filmListContainer.classList.add(`films-list__container`);
 sectionFilmsList.appendChild(filmListContainer);
-renderFilms(filmListContainer, arrayFilms, 0, 5, makeFilm);
-renderFilms(filmListContainerTopRated, arrayFilms, 0, 2, makeFilm);
-renderFilms(filmListContainerMostCommented, arrayFilms, 2, 4, makeFilm);
-renderFilters(navigation, getElementNavigation(), makeElementNavigation);
-renderElement(header, 1, getProfile, makeElementProfile);
-renderElement(body, 1, getPopup, makePopup);
-const commentsList = document.querySelector(`.film-details__comments-list`);
-renderElement(commentsList, 4, getComment, makeComment);
+arrayFilms.slice(0, 5).forEach((filmMock) => renderFilmCard(filmMock, filmListContainer));
+arrayFilms.slice(0, 2).forEach((filmMock) => renderFilmCard(filmMock, filmListContainerTopRated));
+arrayFilms.slice(3, 5).forEach((filmMock) => renderFilmCard(filmMock, filmListContainerMostCommented));
+arrayNavigation.forEach((navMock) => renderNavigation(navMock));
+renderProfile(numberWatched);
 
 addComponent(sectionFilmsList, getElementShowMore());
 
