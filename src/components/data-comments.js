@@ -18,3 +18,7 @@ export const getComment = () => ({
     `Sidney Lumet`,
   ] [Math.floor(Math.random() * 4)],
 });
+
+export const arrayComents = new Array(4)
+.fill(``)
+.map(getComment);

@@ -63,4 +63,6 @@ export const getElementNavigation = () => ([
   },
 ]);
 
+export const arrayNavigation = getElementNavigation();
+
 export {historyCount};
