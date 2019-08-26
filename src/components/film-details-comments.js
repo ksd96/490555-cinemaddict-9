@@ -1,24 +1,11 @@
-import {createElement} from './utils.js';
+import {AbstractComponent} from './absctract-component.js';
 
-export class Comments {
+export class Comments extends AbstractComponent {
   constructor({image, text, author}) {
+    super();
     this._image = image;
     this._text = text;
     this._author = author;
-    this._element = null;
-  }
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    if (this._element) {
-      this._element = null;
-    }
   }
 
   getTemplate() {

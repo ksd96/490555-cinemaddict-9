@@ -1,26 +1,12 @@
-import {createElement} from './utils.js';
+import {AbstractComponent} from './absctract-component.js';
 
-export class Navigation {
+export class Navigation extends AbstractComponent {
   constructor({title, count, tag, classList}) {
+    super();
     this._title = title;
     this._count = count;
     this._tag = tag;
     this._classList = classList;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    if (this._element) {
-      this._element = null;
-    }
   }
 
   getTemplate() {

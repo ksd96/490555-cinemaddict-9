@@ -1,23 +1,9 @@
-import {createElement} from './utils.js';
+import {AbstractComponent} from './absctract-component.js';
 
-export class Profile {
+export class Profile extends AbstractComponent {
   constructor(rank) {
+    super();
     this._rank = rank;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    if (this._element) {
-      this._element = null;
-    }
   }
 
   getTemplate() {

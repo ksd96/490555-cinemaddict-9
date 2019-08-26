@@ -1,7 +1,8 @@
-import {createElement} from './utils.js';
+import {AbstractComponent} from './absctract-component.js';
 
-export class FilmDetails {
+export class FilmDetails extends AbstractComponent {
   constructor({title, rating, nameImage, director, duration, writers, actors, date, country, genres, description, isWatchlist, isHistory, isFavorites}) {
+    super();
     this._title = title;
     this._rating = rating;
     this._duration = duration;
@@ -11,26 +12,11 @@ export class FilmDetails {
     this._isWatchlist = isWatchlist;
     this._isHistory = isHistory;
     this._isFavorites = isFavorites;
-    this._element = null;
     this._director = director;
     this._writers = writers;
     this._actors = actors;
     this._relaeseDate = date;
     this._country = country;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    if (this._element) {
-      this._element = null;
-    }
   }
 
   getTemplate() {
