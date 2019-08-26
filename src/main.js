@@ -16,7 +16,7 @@ import {render, unrender} from './components/utils.js';
 
 const header = document.querySelector(`.header`);
 const main = document.querySelector(`.main`);
-const sectionFilms = document.createElement(`section`).classList.add(`films`);
+const sectionFilms = document.createElement(`section`);
 const sectionFilmsList = document.createElement(`section`);
 const filmListTitle = `<h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>`;
 const filmListContainer = document.createElement(`div`);
@@ -153,7 +153,8 @@ arrayNavigation.forEach((navMock) => renderNavigation(navMock));
 
 addComponent(main, getElementSort());
 
-//sectionFilms.classList.add(`films`);
+
+sectionFilms.classList.add(`films`);
 main.appendChild(sectionFilms);
 
 sectionFilmsList.classList.add(`films-list`);
