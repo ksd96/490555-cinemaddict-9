@@ -11,7 +11,7 @@ export class Comments extends AbstractComponent {
   getTemplate() {
     return `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
-        <img src="./images/emoji/${this._image}" width="55" height="55" alt="emoji">
+        <img src="${this._image}" width="55" height="55" alt="emoji">
       </span>
       <div>
         <p class="film-details__comment-text">${this._text}</p>

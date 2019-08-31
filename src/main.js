@@ -8,7 +8,7 @@ import {getElementShowMore} from './components/button-show-more.js';
 import {arrayFilms} from './components/array-films.js';
 import {totalCard} from './components/array-films.js';
 import {render} from './components/utils.js';
-import {PageController} from './components/page.js';
+import {PageController} from './controllers/page.js';
 
 
 const header = document.querySelector(`.header`);
@@ -35,7 +35,8 @@ const renderShowMore = () => {
     const number = 5;
     const pageCount = filmListContainer.querySelectorAll(`.film-card`).length;
 
-    const pageController = new PageController(filmListContainer, arrayFilms.slice(pageCount, pageCount + number));
+    document.querySelector(`.films-list__container`).innerHTML = ``;
+    const pageController = new PageController(filmListContainer, arrayFilms.slice(0, pageCount + number));
     pageController.init();
 
     if (pageCount >= totalCard) {
@@ -53,7 +54,7 @@ const renderProfile = (profileMock) => {
   render(header, profile.getElement());
 };
 
-const renderNavigation = (navMock) => {
+export const renderNavigation = (navMock) => {
   const nav = new Navigation(navMock);
   if (!main.querySelector(`.main-navigation`)) {
     navigation.classList.add(`main-navigation`);

@@ -1,9 +1,9 @@
 export const getComment = () => ({
   image: [
-    `smile.png`,
-    `sleeping.png`,
-    `puke.png`,
-    `angry.png`,
+    `./images/emoji/smile.png`,
+    `./images/emoji/sleeping.png`,
+    `./images/emoji/puke.png`,
+    `./images/emoji/angry.png`,
   ] [Math.floor(Math.random() * 4)],
   text: [
     `Interesting setting and a good cast`,
