@@ -8,8 +8,9 @@ import {arrayComents} from '../components/data-comments.js';
 const body = document.querySelector(`body`);
 
 export class MovieController {
-  constructor(container, films, onDataChange, onChangeView) {
+  constructor(container, containerPopup, films, onDataChange, onChangeView) {
     this._container = container;
+    this._containerPopup = containerPopup;
     this._films = films;
     this._film = new Film(films);
     this._filmDetails = new FilmDetails(this._films);
@@ -42,7 +43,7 @@ export class MovieController {
   }
 
   _addEmoji(emoji) {
-    const container = document.querySelector(`.film-details__add-emoji-label`);
+    const container = this._containerPopup.querySelector(`.film-details__add-emoji-label`);
     container.innerHTML = ``;
     emoji.width = 60;
     emoji.height = 60;
@@ -50,86 +51,60 @@ export class MovieController {
   }
 
   _createComment(emoji, renderComment) {
-    const textaria = document.querySelector(`.film-details__comment-input`);
+    const textaria = this._containerPopup.querySelector(`.film-details__comment-input`);
     const obj = {
       image: emoji.getAttribute(`src`),
       text: textaria.value,
       author: `author`,
     };
     renderComment(obj);
-    document.querySelector(`.film-details__add-emoji-label`).innerHTML = ``;
+    this._containerPopup.querySelector(`.film-details__add-emoji-label`).innerHTML = ``;
     textaria.value = ``;
     textaria.placeholder = `Select reaction below and write comment here`;
   }
 
   init() {
     let commentsList = null;
-    let container = null;
+    let containerRating = null;
     let emoji = null;
     const entry = this._entry();
 
     const getContainer = () => {
-      const formContainer = document.querySelector(`.film-details__inner`);
-      const containerTop = document.querySelector(`.form-details__bottom-container`);
-      container = document.createElement(`div`);
-      container.classList.add(`form-details__middle-container`);
-      formContainer.insertBefore(container, containerTop);
+      const formContainer = this._containerPopup.querySelector(`.film-details__inner`);
+      const containerTop = this._containerPopup.querySelector(`.form-details__bottom-container`);
+      containerRating = document.createElement(`div`);
+      containerRating.classList.add(`form-details__middle-container`);
+      formContainer.insertBefore(containerRating, containerTop);
 
-      return container;
+      return containerRating;
     };
 
 
     const renderComment = (commentMock) => {
       const comment = new Comments(commentMock);
-      commentsList = document.querySelector(`.film-details__comments-list`);
+      commentsList = this._containerPopup.querySelector(`.film-details__comments-list`);
       render(commentsList, comment.getElement());
-      const arr = Array.from(document.querySelectorAll(`.film-details__emoji-label`));
-      for (const label of arr) {
-        label.addEventListener(`click`, () => {
-          emoji = label.querySelector(`img`).cloneNode();
+      this._containerPopup.querySelector(`.film-details__emoji-list`)
+        .addEventListener(`click`, (event) => {
+          emoji = event.target.closest(`img`).cloneNode();
           this._addEmoji(emoji);
         });
-      }
     };
 
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
         unrender(this._filmDetails.getElement());
         commentsList.innerHTML = ``;
-        container.innerHTML = ``;
+        containerRating.innerHTML = ``;
         document.removeEventListener(`keydown`, onEscKeyDown);
+        this._onDataChange(entry, this._films);
       }
     };
 
     this._film.getElement()
-      .querySelector(`img`)
       .addEventListener(`click`, () => {
         this._onChangeView();
-        render(body, this._filmDetails.getElement());
-        arrayComents.forEach((commentMock) => renderComment(commentMock));
-        if (this._films.isHistory) {
-          render(getContainer(), this._rating.getElement());
-        }
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
-
-    this._film.getElement()
-      .querySelector(`.film-card__title`)
-      .addEventListener(`click`, () => {
-        this._onChangeView();
-        render(body, this._filmDetails.getElement());
-        arrayComents.forEach((commentMock) => renderComment(commentMock));
-        if (this._films.isHistory) {
-          render(getContainer(), this._rating.getElement());
-        }
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
-
-    this._film.getElement()
-      .querySelector(`.film-card__comments`)
-      .addEventListener(`click`, () => {
-        this._onChangeView();
-        render(body, this._filmDetails.getElement());
+        render(this._containerPopup, this._filmDetails.getElement());
         arrayComents.forEach((commentMock) => renderComment(commentMock));
         if (this._films.isHistory) {
           render(getContainer(), this._rating.getElement());
@@ -152,14 +127,16 @@ export class MovieController {
       .addEventListener(`click`, () => {
         unrender(this._filmDetails.getElement());
         commentsList.innerHTML = ``;
-        container.innerHTML = ``;
+        containerRating.innerHTML = ``;
         document.removeEventListener(`keydown`, onEscKeyDown);
+        this._onDataChange(entry, this._films);
       });
 
     this._film.getElement()
       .querySelector(`.film-card__controls-item--add-to-watchlist`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
+        evt.stopPropagation();
         entry.isWatchlist = this._films.isWatchlist ? false : true;
         this._onDataChange(entry, this._films);
         document.removeEventListener(`keydown`, onEscKeyDown);
@@ -169,6 +146,7 @@ export class MovieController {
       .querySelector(`.film-card__controls-item--mark-as-watched`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
+        evt.stopPropagation();
         entry.isHistory = this._films.isHistory ? false : true;
         this._onDataChange(entry, this._films);
         document.removeEventListener(`keydown`, onEscKeyDown);
@@ -178,6 +156,7 @@ export class MovieController {
       .querySelector(`.film-card__controls-item--favorite`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
+        evt.stopPropagation();
         entry.isFavorites = this._films.isFavorites ? false : true;
         this._onDataChange(entry, this._films);
         document.removeEventListener(`keydown`, onEscKeyDown);
@@ -187,7 +166,6 @@ export class MovieController {
       .querySelector(`.film-details__control-label--watchlist`)
       .addEventListener(`click`, () => {
         entry.isWatchlist = this._films.isWatchlist ? false : true;
-        this._onDataChange(entry, this._films);
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -196,12 +174,11 @@ export class MovieController {
       .addEventListener(`click`, () => {
         entry.isHistory = this._films.isHistory ? false : true;
         if (document.querySelector(`.film-details__user-rating-wrap`)) {
-          container.innerHTML = ``;
+          containerRating.innerHTML = ``;
           entry.ratingFilm = null;
         } else {
           render(getContainer(), this._rating.getElement());
         }
-        this._onDataChange(entry, this._films);
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -209,7 +186,6 @@ export class MovieController {
       .querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, () => {
         entry.isFavorites = this._films.isFavorites ? false : true;
-        this._onDataChange(entry, this._films);
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -220,7 +196,6 @@ export class MovieController {
         if (evt.key === `Enter`) {
           evt.preventDefault();
           this._createComment(emoji, renderComment);
-          this._onDataChange(entry, this._films);
         }
       });
 
@@ -228,7 +203,7 @@ export class MovieController {
   }
 
   setDefaultView() {
-    if (document.body.contains(this._filmDetails.getElement())) {
+    if (body.contains(this._filmDetails.getElement())) {
       unrender(this._filmDetails.getElement());
       this._filmDetails.removeElement();
     }

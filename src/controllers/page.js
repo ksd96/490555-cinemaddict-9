@@ -1,8 +1,9 @@
 import {MovieController} from './movie.js';
 
 export class PageController {
-  constructor(container, films) {
+  constructor(container, containerPopup, films) {
     this._container = container;
+    this._containerPopup = containerPopup;
     this._films = films;
 
     this._subscriptions = [];
@@ -20,7 +21,7 @@ export class PageController {
   }
 
   _renderFilm(films) {
-    const movieController = new MovieController(this._container, films, this._onDataChange, this._onChangeView);
+    const movieController = new MovieController(this._container, this._containerPopup, films, this._onDataChange, this._onChangeView);
     this._subscriptions.push(movieController.setDefaultView.bind(movieController));
   }
 

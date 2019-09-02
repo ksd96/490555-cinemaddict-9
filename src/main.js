@@ -25,6 +25,7 @@ const filmListMostCommentedTitle = `<h2 class="films-list__title">Most commented
 const filmListContainerMostCommented = document.createElement(`div`);
 const navigation = document.createElement(`nav`);
 const footerCount = document.querySelector(`.footer__statistics`);
+const body = document.querySelector(`body`);
 
 const addComponent = (where, what) => {
   where.insertAdjacentHTML(`beforeend`, what);
@@ -36,7 +37,7 @@ const renderShowMore = () => {
     const pageCount = filmListContainer.querySelectorAll(`.film-card`).length;
 
     document.querySelector(`.films-list__container`).innerHTML = ``;
-    const pageController = new PageController(filmListContainer, arrayFilms.slice(0, pageCount + number));
+    const pageController = new PageController(filmListContainer, body, arrayFilms.slice(0, pageCount + number));
     pageController.init();
 
     if (pageCount >= totalCard) {
@@ -73,7 +74,7 @@ const renderFilmsExtra = (section, container, title, first, second) => {
   container.classList.add(`films-list__container`);
   section.appendChild(container);
 
-  const pageControllerExtra = new PageController(container, arrayFilms.slice(first, second));
+  const pageControllerExtra = new PageController(container, body, arrayFilms.slice(first, second));
   pageControllerExtra.init();
 };
 
@@ -93,7 +94,7 @@ addComponent(sectionFilmsList, filmListTitle);
 
 filmListContainer.classList.add(`films-list__container`);
 sectionFilmsList.appendChild(filmListContainer);
-const pageController = new PageController(filmListContainer, arrayFilms.slice(0, 5));
+const pageController = new PageController(filmListContainer, body, arrayFilms.slice(0, 5));
 pageController.init();
 
 renderFilmsExtra(sectionFilmListTopRated, filmListContainerTopRated, filmListTopRatedTitle, 0, 2);
