@@ -85,4 +85,5 @@ export const getFilm = () => ({
   isWatchlist: Boolean(Math.round(Math.random())),
   isHistory: Boolean(Math.round(Math.random())),
   isFavorites: Boolean(Math.round(Math.random())),
+  ratingFilm: Math.floor(Math.random() * (9 - 1)) + 1,
 });
