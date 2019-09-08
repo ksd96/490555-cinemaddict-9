@@ -1,7 +1,7 @@
 import {AbstractComponent} from './absctract-component.js';
 
 export class FilmDetails extends AbstractComponent {
-  constructor({title, rating, nameImage, director, duration, writers, actors, date, country, genres, description, isWatchlist, isHistory, isFavorites}) {
+  constructor({title, rating, nameImage, director, duration, writers, actors, date, country, genres, description, isWatchlist, isHistory, isFavorites, arrayComments}) {
     super();
     this._title = title;
     this._rating = rating;
@@ -17,6 +17,7 @@ export class FilmDetails extends AbstractComponent {
     this._actors = actors;
     this._relaeseDate = date;
     this._country = country;
+    this._arrayComments = arrayComments;
   }
 
   getTemplate() {
@@ -97,7 +98,7 @@ export class FilmDetails extends AbstractComponent {
 
       <div class="form-details__bottom-container">
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${this._arrayComments.length}</span></h3>
 
           <ul class="film-details__comments-list">
           </ul>

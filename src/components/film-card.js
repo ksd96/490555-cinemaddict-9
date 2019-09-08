@@ -1,7 +1,7 @@
 import {AbstractComponent} from './absctract-component.js';
 
 export class Film extends AbstractComponent {
-  constructor({title, rating, date, duration, genres, nameImage, description, comments, isWatchlist, isHistory, isFavorites}) {
+  constructor({title, rating, date, duration, genres, nameImage, description, comments, isWatchlist, isHistory, isFavorites, arrayComments}) {
     super();
     this._title = title;
     this._rating = rating;
@@ -14,6 +14,7 @@ export class Film extends AbstractComponent {
     this._isWatchlist = isWatchlist;
     this._isHistory = isHistory;
     this._isFavorites = isFavorites;
+    this._arrayComments = arrayComments;
   }
 
   getTemplate() {
@@ -27,7 +28,7 @@ export class Film extends AbstractComponent {
       </p>
       <img src="./images/posters/${this._nameImage}" alt="" class="film-card__poster">
       <p class="film-card__description">${this._description}</p>
-      <a class="film-card__comments">${this._comments} comments</a>
+      <a class="film-card__comments">${this._arrayComments.length} comments</a>
       <form class="film-card__controls">
         <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${this._isWatchlist ? `film-card__controls-item--active` : ``}">Add to watchlist</button>
         <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${this._isHistory ? `film-card__controls-item--active` : ``}">Mark as watched</button>

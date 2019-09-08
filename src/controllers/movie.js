@@ -3,7 +3,6 @@ import {Film} from '../components/film-card.js';
 import {FilmDetails} from '../components/film-details.js';
 import {Rating} from '../components/rating.js';
 import {Comments} from '../components/film-details-comments.js';
-import {arrayComents} from '../components/data-comments.js';
 
 const body = document.querySelector(`body`);
 
@@ -39,28 +38,8 @@ export class MovieController {
       isHistory: this._films.isHistory,
       isFavorites: this._films.isFavorites,
       ratingFilm: this._films.ratingFilm,
+      arrayComments: this._films.arrayComments,
     };
-  }
-
-  _addEmoji(emoji) {
-    const container = this._containerPopup.querySelector(`.film-details__add-emoji-label`);
-    container.innerHTML = ``;
-    emoji.width = 60;
-    emoji.height = 60;
-    container.append(emoji);
-  }
-
-  _createComment(emoji, renderComment) {
-    const textaria = this._containerPopup.querySelector(`.film-details__comment-input`);
-    const obj = {
-      image: emoji.getAttribute(`src`),
-      text: textaria.value,
-      author: `author`,
-    };
-    renderComment(obj);
-    this._containerPopup.querySelector(`.film-details__add-emoji-label`).innerHTML = ``;
-    textaria.value = ``;
-    textaria.placeholder = `Select reaction below and write comment here`;
   }
 
   init() {
@@ -79,25 +58,54 @@ export class MovieController {
       return containerRating;
     };
 
+    const onCommentsChange = (newData, oldData) => {
+      const index = this._films.arrayComments.findIndex((comments) => {
+        if (oldData !== null && comments.text === oldData._text && comments.image === oldData._image && comments.author === oldData._author) {
+          return true;
+        } else {
+          return false;
+        }
+      });
 
-    const renderComment = (commentMock) => {
-      const comment = new Comments(commentMock);
+      if (newData === null) {
+        this._films.arrayComments = [...this._films.arrayComments.slice(0, index), ...this._films.arrayComments.slice(index + 1)];
+      } else {
+        this._films.arrayComments.unshift(newData);
+      }
+      renderCommentsAgain(this._films.arrayComments);
+    };
+
+    const renderCommentsAgain = (_comments) => {
+      commentsList.innerHTML = ``;
+      this._films.arrayComments.forEach((commentMock) => renderComment(commentMock));
+      entry.arrayComments = this._films.arrayComments;
+    };
+
+    const renderComment = (comments) => {
+      const comment = new Comments(comments);
+
+      comment.getElement()
+        .querySelector(`.film-details__comment-delete`)
+        .addEventListener(`click`, (evt) => {
+          evt.preventDefault();
+          onCommentsChange(null, comment);
+          let quantityComments = this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML;
+          this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML = `${+quantityComments - 1}`;
+        });
+
       commentsList = this._containerPopup.querySelector(`.film-details__comments-list`);
       render(commentsList, comment.getElement());
-      this._containerPopup.querySelector(`.film-details__emoji-list`)
-        .addEventListener(`click`, (event) => {
-          emoji = event.target.closest(`img`).cloneNode();
-          this._addEmoji(emoji);
-        });
     };
 
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
+        this._onDataChange(entry, this._films);
         unrender(this._filmDetails.getElement());
         commentsList.innerHTML = ``;
-        containerRating.innerHTML = ``;
+        if (containerRating !== null) {
+          containerRating.innerHTML = ``;
+        }
         document.removeEventListener(`keydown`, onEscKeyDown);
-        this._onDataChange(entry, this._films);
       }
     };
 
@@ -105,10 +113,51 @@ export class MovieController {
       .addEventListener(`click`, () => {
         this._onChangeView();
         render(this._containerPopup, this._filmDetails.getElement());
-        arrayComents.forEach((commentMock) => renderComment(commentMock));
+        this._films.arrayComments.forEach((commentMock) => renderComment(commentMock));
+
+        this._filmDetails.getElement()
+        .querySelector(`.film-details__emoji-list`)
+        .addEventListener(`click`, (event) => {
+          emoji = event.target.closest(`img`).cloneNode();
+          const addEmoji = (image) => {
+            const container = this._containerPopup.querySelector(`.film-details__add-emoji-label`);
+            container.innerHTML = ``;
+            image.width = 60;
+            image.height = 60;
+            container.append(image);
+          };
+          addEmoji(emoji);
+        });
+
+        this._filmDetails.getElement()
+          .querySelector(`.film-details__comment-input`)
+          .addEventListener(`keydown`, (evt) => {
+            if (evt.key === `Enter`) {
+              evt.preventDefault();
+              const createComment = (image) => {
+                const textaria = this._containerPopup.querySelector(`.film-details__comment-input`);
+                const obj = {
+                  image: image.getAttribute(`src`),
+                  text: textaria.value,
+                  author: `author`,
+                };
+
+                onCommentsChange(obj, null);
+
+                this._containerPopup.querySelector(`.film-details__add-emoji-label`).innerHTML = ``;
+                textaria.value = ``;
+                textaria.placeholder = `Select reaction below and write comment here`;
+              };
+              let quantityComments = this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML;
+              this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML = `${+quantityComments + 1}`;
+              createComment(emoji);
+            }
+          });
+
         if (this._films.isHistory) {
           render(getContainer(), this._rating.getElement());
         }
+
         document.addEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -187,16 +236,6 @@ export class MovieController {
       .addEventListener(`click`, () => {
         entry.isFavorites = this._films.isFavorites ? false : true;
         document.addEventListener(`keydown`, onEscKeyDown);
-      });
-
-
-    this._filmDetails.getElement()
-      .querySelector(`.film-details__comment-input`)
-      .addEventListener(`keydown`, (evt) => {
-        if (evt.key === `Enter`) {
-          evt.preventDefault();
-          this._createComment(emoji, renderComment);
-        }
       });
 
     render(this._container, this._film.getElement());
