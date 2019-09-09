@@ -22,14 +22,12 @@ export class SearchController {
       const searchResult = new SectionFilms();
       render(this._containerResult, searchResult.getElement());
 
-      let radio = false;
-      if (radio === true) {
-        radio = false;
-      } else if (radio === false) {
-        radio = true;
-      }
+      const radio = false;
+      const check = (radio === false) ? true : false;
 
-      const page = new PageController(body, this._containerResult, arrayResult, ``, radio);
+      // radio ? false : true;
+
+      const page = new PageController(body, this._containerResult, arrayResult, ``, check);
 
       for (const value of this._films) {
         if (value.title.trim().toLowerCase().search(textariaValue) !== -1) {
@@ -76,12 +74,10 @@ export class SearchController {
       .addEventListener(`keyup`, (evt) => {
         evt.preventDefault();
         const textariaValue = search.getElement().querySelector(`.search__field`).value.trim();
-        if (textariaValue !== ``) {
-          if (textariaValue.length >= 3) {
-            this._containerResult.innerHTML = ``;
-            searchFilms();
-          }
-        } else {
+        if (textariaValue !== `` && textariaValue.length >= 3) {
+          this._containerResult.innerHTML = ``;
+          searchFilms();
+        } else if (textariaValue === ``) {
           renderBack();
         }
 
