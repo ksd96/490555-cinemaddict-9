@@ -1,3 +1,5 @@
+import {getComment} from './data-comments.js';
+
 export const getFilm = () => ({
   title: [
     `The Shawshank Redemption`,
@@ -81,9 +83,10 @@ export const getFilm = () => ({
     `England`,
     `Russia`,
   ] [Math.floor(Math.random() * 4)],
-  comments: Math.floor(Math.random() * (300 - 10)) + 10,
   isWatchlist: Boolean(Math.round(Math.random())),
   isHistory: Boolean(Math.round(Math.random())),
   isFavorites: Boolean(Math.round(Math.random())),
   ratingFilm: Math.floor(Math.random() * (9 - 1)) + 1,
+  arrayComments: new Array(4).fill(``).map(getComment),
+  // comments: Math.floor(Math.random() * (300 - 10)) + 10,
 });

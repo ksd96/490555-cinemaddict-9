@@ -30,6 +30,7 @@ const favoritesCount = () => {
   return arr;
 };
 
+
 export const getElementNavigation = () => ([
   {
     title: `All movies`,
