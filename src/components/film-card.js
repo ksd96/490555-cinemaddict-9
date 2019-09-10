@@ -22,11 +22,11 @@ export class Film extends AbstractComponent {
       <h3 class="film-card__title">${this._title}</h3>
      <p class="film-card__rating">${this._rating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${this._date.getFullYear()}</span>
+        <span class="film-card__year">${this._date/* .getFullYear() */}</span>
         <span class="film-card__duration">${this._duration}</span>
         <span class="film-card__genre">${this._genres[Math.floor(Math.random() * (6 - 0) + 0)]}</span>
       </p>
-      <img src="./images/posters/${this._nameImage}" alt="" class="film-card__poster">
+      <img src="${this._nameImage}" alt="" class="film-card__poster">
       <p class="film-card__description">${this._description}</p>
       <a class="film-card__comments">${this._arrayComments.length} comments</a>
       <form class="film-card__controls">

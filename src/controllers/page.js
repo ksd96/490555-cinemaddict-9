@@ -6,6 +6,7 @@ import {Statistic} from '../components/statistic.js';
 import {Sort} from '../components/sort.js';
 import {FilmsContainer} from '../components/films-container';
 import {ExtraContainer} from '../components/films-extra-container.js';
+import {onDataChange} from '../main.js';
 
 export class PageController {
   constructor(containerBody, main, films, arrayNavigation, radio) {
@@ -26,6 +27,8 @@ export class PageController {
     this._onChangeView = this._onChangeView.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
     this._count = 5;
+
+    this._array = null;
   }
 
   init() {
@@ -80,6 +83,8 @@ export class PageController {
       this._renderFilmsTopRated(this._films);
       this._renderFilmsMostCommented(this._films);
     }
+
+    onDataChange(`update`, this._films[0]);
   }
 
   _onChangeView() {

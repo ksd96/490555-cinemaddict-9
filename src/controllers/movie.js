@@ -2,7 +2,9 @@ import {render, unrender} from '../components/utils.js';
 import {Film} from '../components/film-card.js';
 import {FilmDetails} from '../components/film-details.js';
 import {Rating} from '../components/rating.js';
-import {Comments} from '../components/film-details-comments.js';
+// import {Comments} from '../components/film-details-comments.js';
+import {CommentsController} from './comments.js';
+import {api} from '../main.js';
 
 const body = document.querySelector(`body`);
 
@@ -22,6 +24,7 @@ export class MovieController {
 
   _entry() {
     return {
+      id: this._films.id,
       title: this._films.title,
       rating: this._films.rating,
       date: this._films.date,
@@ -58,6 +61,7 @@ export class MovieController {
       return containerRating;
     };
 
+    /*
     const onCommentsChange = (newData, oldData) => {
       const index = this._films.arrayComments.findIndex((comments) => {
         if (oldData !== null && comments.text === oldData._text && comments.image === oldData._image && comments.author === oldData._author) {
@@ -83,7 +87,6 @@ export class MovieController {
 
     const renderComment = (comments) => {
       const comment = new Comments(comments);
-
       comment.getElement()
         .querySelector(`.film-details__comment-delete`)
         .addEventListener(`click`, (evt) => {
@@ -92,10 +95,10 @@ export class MovieController {
           let quantityComments = this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML;
           this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML = `${+quantityComments - 1}`;
         });
-
       commentsList = this._containerPopup.querySelector(`.film-details__comments-list`);
       render(commentsList, comment.getElement());
     };
+    */
 
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
@@ -113,7 +116,12 @@ export class MovieController {
       .addEventListener(`click`, () => {
         this._onChangeView();
         render(this._containerPopup, this._filmDetails.getElement());
-        this._films.arrayComments.forEach((commentMock) => renderComment(commentMock));
+        api.getComments(this._films.id).then((comments) => {
+          const commentsController = new CommentsController(comments, this._containerPopup);
+          commentsController.init();
+          commentsList = this._containerPopup.querySelector(`.film-details__comments-list`);
+        });
+        // this.films_arrayComments.forEach((commentMock) => renderComment(commentMock));
 
         this._filmDetails.getElement()
         .querySelector(`.film-details__emoji-list`)
@@ -136,6 +144,7 @@ export class MovieController {
               evt.preventDefault();
               const createComment = (image) => {
                 const textaria = this._containerPopup.querySelector(`.film-details__comment-input`);
+
                 const obj = {
                   image: image.getAttribute(`src`),
                   text: textaria.value,

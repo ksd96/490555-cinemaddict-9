@@ -25,8 +25,6 @@ export class SearchController {
       const radio = false;
       const check = (radio === false) ? true : false;
 
-      // radio ? false : true;
-
       const page = new PageController(body, this._containerResult, arrayResult, ``, check);
 
       for (const value of this._films) {

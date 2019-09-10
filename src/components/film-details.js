@@ -29,7 +29,7 @@ export class FilmDetails extends AbstractComponent {
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./images/posters/${this._nameImage}" alt="">
+            <img class="film-details__poster-img" src="${this._nameImage}" alt="">
 
             <p class="film-details__age">18+</p>
           </div>
@@ -61,7 +61,7 @@ export class FilmDetails extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${this._relaeseDate.toDateString()}</td>
+                <td class="film-details__cell">${this._relaeseDate/* .toDateString()*/}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
