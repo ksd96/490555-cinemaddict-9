@@ -2,12 +2,13 @@ import {render, unrender} from '../components/utils.js';
 import {Film} from '../components/film-card.js';
 import {FilmDetails} from '../components/film-details.js';
 import {Rating} from '../components/rating.js';
-import {Comments} from '../components/film-details-comments.js';
+import {CommentsController} from './comments.js';
+import {api} from '../main.js';
 
 const body = document.querySelector(`body`);
 
 export class MovieController {
-  constructor(container, containerPopup, films, onDataChange, onChangeView) {
+  constructor(container, containerPopup, films, onDataChange, onChangeView, onDataChangeMain, radio) {
     this._container = container;
     this._containerPopup = containerPopup;
     this._films = films;
@@ -17,11 +18,15 @@ export class MovieController {
     this._onDataChange = onDataChange;
     this._onChangeView = onChangeView;
 
+    this._radio = radio;
+    this._onDataChangeMain = onDataChangeMain;
+
     this.init();
   }
 
   _entry() {
     return {
+      id: this._films.id,
       title: this._films.title,
       rating: this._films.rating,
       date: this._films.date,
@@ -46,7 +51,7 @@ export class MovieController {
     let commentsList = null;
     let containerRating = null;
     let emoji = null;
-    const entry = this._entry();
+    let entry = this._entry();
 
     const getContainer = () => {
       const formContainer = this._containerPopup.querySelector(`.film-details__inner`);
@@ -58,48 +63,9 @@ export class MovieController {
       return containerRating;
     };
 
-    const onCommentsChange = (newData, oldData) => {
-      const index = this._films.arrayComments.findIndex((comments) => {
-        if (oldData !== null && comments.text === oldData._text && comments.image === oldData._image && comments.author === oldData._author) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-
-      if (newData === null) {
-        this._films.arrayComments = [...this._films.arrayComments.slice(0, index), ...this._films.arrayComments.slice(index + 1)];
-      } else {
-        this._films.arrayComments.unshift(newData);
-      }
-      renderCommentsAgain(this._films.arrayComments);
-    };
-
-    const renderCommentsAgain = (_comments) => {
-      commentsList.innerHTML = ``;
-      this._films.arrayComments.forEach((commentMock) => renderComment(commentMock));
-      entry.arrayComments = this._films.arrayComments;
-    };
-
-    const renderComment = (comments) => {
-      const comment = new Comments(comments);
-
-      comment.getElement()
-        .querySelector(`.film-details__comment-delete`)
-        .addEventListener(`click`, (evt) => {
-          evt.preventDefault();
-          onCommentsChange(null, comment);
-          let quantityComments = this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML;
-          this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML = `${+quantityComments - 1}`;
-        });
-
-      commentsList = this._containerPopup.querySelector(`.film-details__comments-list`);
-      render(commentsList, comment.getElement());
-    };
-
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
-        this._onDataChange(entry, this._films);
+        this._onDataChangeMain(`update`, entry, this._films);
         unrender(this._filmDetails.getElement());
         commentsList.innerHTML = ``;
         if (containerRating !== null) {
@@ -113,12 +79,21 @@ export class MovieController {
       .addEventListener(`click`, () => {
         this._onChangeView();
         render(this._containerPopup, this._filmDetails.getElement());
-        this._films.arrayComments.forEach((commentMock) => renderComment(commentMock));
+        api.getComments(this._films.id).then((comments) => {
+          const commentsController = new CommentsController(comments, this._containerPopup, this._onDataChangeMain, this._films.id);
+          commentsController.init();
+          commentsList = this._containerPopup.querySelector(`.film-details__comments-list`);
+        });
 
         this._filmDetails.getElement()
         .querySelector(`.film-details__emoji-list`)
         .addEventListener(`click`, (event) => {
-          emoji = event.target.closest(`img`).cloneNode();
+          if (event.target.tagName !== `IMG`) {
+            return;
+          }
+
+          emoji = event.target.cloneNode();
+
           const addEmoji = (image) => {
             const container = this._containerPopup.querySelector(`.film-details__add-emoji-label`);
             container.innerHTML = ``;
@@ -127,6 +102,7 @@ export class MovieController {
             container.append(image);
           };
           addEmoji(emoji);
+
         });
 
         this._filmDetails.getElement()
@@ -134,20 +110,25 @@ export class MovieController {
           .addEventListener(`keydown`, (evt) => {
             if (evt.key === `Enter`) {
               evt.preventDefault();
+
               const createComment = (image) => {
                 const textaria = this._containerPopup.querySelector(`.film-details__comment-input`);
+
                 const obj = {
-                  image: image.getAttribute(`src`),
+                  image: image.getAttribute(`id`),
                   text: textaria.value,
-                  author: `author`,
+                  date: Date.now(),
                 };
 
-                onCommentsChange(obj, null);
+                textaria.disabled = true;
+                this._onDataChangeMain(`add`, this._films.id, obj, this._films.id);
 
                 this._containerPopup.querySelector(`.film-details__add-emoji-label`).innerHTML = ``;
                 textaria.value = ``;
                 textaria.placeholder = `Select reaction below and write comment here`;
+
               };
+
               let quantityComments = this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML;
               this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML = `${+quantityComments + 1}`;
               createComment(emoji);
@@ -156,6 +137,16 @@ export class MovieController {
 
         if (this._films.isHistory) {
           render(getContainer(), this._rating.getElement());
+
+          this._rating.getElement()
+            .querySelector(`.film-details__user-rating-score`)
+            .addEventListener(`click`, (evt) => {
+              if (evt.target.tagName !== `LABEL`) {
+                return;
+              }
+              entry.ratingFilm = +evt.target.innerHTML;
+            });
+
         }
 
         document.addEventListener(`keydown`, onEscKeyDown);
@@ -178,7 +169,7 @@ export class MovieController {
         commentsList.innerHTML = ``;
         containerRating.innerHTML = ``;
         document.removeEventListener(`keydown`, onEscKeyDown);
-        this._onDataChange(entry, this._films);
+        this._onDataChangeMain(`update`, entry, this._films);
       });
 
     this._film.getElement()
@@ -187,7 +178,7 @@ export class MovieController {
         evt.preventDefault();
         evt.stopPropagation();
         entry.isWatchlist = this._films.isWatchlist ? false : true;
-        this._onDataChange(entry, this._films);
+        this._onDataChangeMain(`update`, entry, this._films);
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -197,7 +188,7 @@ export class MovieController {
         evt.preventDefault();
         evt.stopPropagation();
         entry.isHistory = this._films.isHistory ? false : true;
-        this._onDataChange(entry, this._films);
+        this._onDataChangeMain(`update`, entry, this._films);
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -207,7 +198,7 @@ export class MovieController {
         evt.preventDefault();
         evt.stopPropagation();
         entry.isFavorites = this._films.isFavorites ? false : true;
-        this._onDataChange(entry, this._films);
+        this._onDataChangeMain(`update`, entry, this._films);
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
 
@@ -224,9 +215,17 @@ export class MovieController {
         entry.isHistory = this._films.isHistory ? false : true;
         if (document.querySelector(`.film-details__user-rating-wrap`)) {
           containerRating.innerHTML = ``;
-          entry.ratingFilm = null;
+          entry.ratingFilm = 0;
         } else {
           render(getContainer(), this._rating.getElement());
+          this._rating.getElement()
+            .querySelector(`.film-details__user-rating-score`)
+            .addEventListener(`click`, (evt) => {
+              if (evt.target.tagName !== `LABEL`) {
+                return;
+              }
+              entry.ratingFilm = +evt.target.innerHTML;
+            });
         }
         document.addEventListener(`keydown`, onEscKeyDown);
       });

@@ -1,4 +1,5 @@
 import {AbstractComponent} from './absctract-component.js';
+import moment from 'moment';
 
 export class FilmDetails extends AbstractComponent {
   constructor({title, rating, nameImage, director, duration, writers, actors, date, country, genres, description, isWatchlist, isHistory, isFavorites, arrayComments}) {
@@ -29,7 +30,7 @@ export class FilmDetails extends AbstractComponent {
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./images/posters/${this._nameImage}" alt="">
+            <img class="film-details__poster-img" src="${this._nameImage}" alt="">
 
             <p class="film-details__age">18+</p>
           </div>
@@ -61,22 +62,20 @@ export class FilmDetails extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${this._relaeseDate.toDateString()}</td>
+                <td class="film-details__cell">${moment(this._relaeseDate).format(`LL`)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${this._duration}</td>
+                <td class="film-details__cell">${Math.trunc(this._duration / 60)}h ${Math.trunc(this._duration % 60)}m</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
                 <td class="film-details__cell">${this._country}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
+                <td class="film-details__term">${(this._genres.length > 1) ? `Genres` : `Genre`}</td>
                 <td class="film-details__cell">
-                  <span class="film-details__genre">${this._genres[Math.floor(Math.random() * (6 - 0) + 0)]}</span>
-                  <span class="film-details__genre">${this._genres[Math.floor(Math.random() * (6 - 0) + 0)]}</span>
-                  <span class="film-details__genre">${this._genres[Math.floor(Math.random() * (6 - 0) + 0)]}</span></td>
+                  <span class="film-details__genre">${this._genres}</span></td>
               </tr>
             </table>
 
@@ -113,22 +112,22 @@ export class FilmDetails extends AbstractComponent {
             <div class="film-details__emoji-list">
               <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="sleeping">
               <label class="film-details__emoji-label" for="emoji-smile">
-                <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
+                <img id="smile" src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
               </label>
 
               <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="neutral-face">
               <label class="film-details__emoji-label" for="emoji-sleeping">
-                <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
+                <img id="sleeping" src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
               </label>
 
               <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="grinning">
               <label class="film-details__emoji-label" for="emoji-gpuke">
-                <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
+                <img id="puke" src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
               </label>
 
               <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="grinning">
               <label class="film-details__emoji-label" for="emoji-angry">
-                <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
+                <img id="angry" src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
               </label>
             </div>
           </div>
