@@ -1,5 +1,6 @@
 import {ModelFilms} from './model-films.js';
 import {ModelComments} from './model-comments.js';
+import moment from 'moment';
 
 const Method = {
   GET: `GET`,
@@ -40,24 +41,28 @@ export class API {
       .then(ModelComments.parseTasks);
   }
 
-  /*
-  createFilm({task}) {
-    return this._load({
-      url: `tasks`,
-      method: Method.POST,
-      body: JSON.stringify(task),
-      headers: new Headers({'Content-Type': `application/json`})
-    })
-      .then(toJSON)
-      .then(ModelFilms.parseTask);
+  toRAWComment(data) {
+    return {
+      "comment": data.text,
+      "date": moment(data.date).format(),
+      "emotion": data.image,
+    };
   }
-  */
+
+  createComment({id, data}) {
+    return this._load({
+      url: `comments/${id}`,
+      method: Method.POST,
+      body: JSON.stringify(this.toRAWComment(data)),
+      headers: new Headers({'Content-Type': `application/json`})
+    });
+  }
 
   toRAW(data) {
     return {
-      "id": data.id,
-      "comments": data.arrayComments,
-      "film_info": {
+      'id': data.id,
+      'comments': data.arrayComments,
+      'film_info': {
         "title": data.title,
         "alternative_title": data.title,
         "total_rating": 5.3,
@@ -67,11 +72,11 @@ export class API {
         "writers": data.writers,
         "actors": data.actors,
         "release": {
-          "date": 1475924187819,
-          "release_country": data.release,
+          "date": `1993-09-23T10:57:49.860Z`,
+          "release_country": `usa`,
         },
         "runtime": 77,
-        "genre": data.genre,
+        "genre": data.arrayComments,
         "description": data.description,
       },
       'user_details': {
@@ -79,27 +84,30 @@ export class API {
         'favorite': data.isFavorites,
         'already_watched': data.isHistory,
         'personal_rating': data.ratingFilm,
-        'watching_date': data.watchingDate,
-      }
+        'watching_date': `1993-09-23T10:57:49.860Z`,
+      },
     };
   }
-
 
   updateFilm({id, data}) {
     return this._load({
       url: `movies/${id}`,
       method: Method.PUT,
       body: JSON.stringify(this.toRAW(data)),
+      headers: new Headers({'Content-Type': `application/json`})
     })
       .then(toJSON)
       .then(ModelFilms.parseTask);
   }
 
-
-  deletecomment({id}) {
-    return this._load({url: `comments/${id}`, method: Method.DELETE});
+  deleteComment({id, data}) {
+    return this._load({
+      url: `comments/${id}`,
+      method: `DELETE`,
+      body: JSON.stringify(this.toRAWComment(data)),
+      headers: new Headers({'Content-Type': `application/json`}),
+    });
   }
-
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
@@ -107,6 +115,7 @@ export class API {
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {
+        // eslint-disable-next-line no-console
         console.error(`fetch error: ${err}`);
         throw err;
       });
