@@ -1,13 +1,13 @@
 import {render, unrender} from '../components/utils.js';
-import {Film} from '../components/film-card.js';
-import {FilmDetails} from '../components/film-details.js';
-import {Rating} from '../components/rating.js';
-import {CommentsController} from './comments.js';
+import Film from '../components/film-card.js';
+import FilmDetails from '../components/film-details.js';
+import Rating from '../components/rating.js';
+import CommentsController from './comments.js';
 import {api} from '../main.js';
 
 const body = document.querySelector(`body`);
 
-export class MovieController {
+export default class MovieController {
   constructor(container, containerPopup, films, onDataChange, onChangeView, onDataChangeMain, radio) {
     this._container = container;
     this._containerPopup = containerPopup;
@@ -52,6 +52,7 @@ export class MovieController {
     let containerRating = null;
     let emoji = null;
     let entry = this._entry();
+    let keyCombination = [];
 
     const getContainer = () => {
       const formContainer = this._containerPopup.querySelector(`.film-details__inner`);
@@ -108,7 +109,14 @@ export class MovieController {
         this._filmDetails.getElement()
           .querySelector(`.film-details__comment-input`)
           .addEventListener(`keydown`, (evt) => {
-            if (evt.key === `Enter`) {
+            if (evt.key === `Control` && keyCombination.length === 0) {
+              keyCombination.push(evt.key);
+            } else if (evt.key === `Enter` && keyCombination.length === 1) {
+              keyCombination.push(evt.key);
+            } else {
+              keyCombination = [];
+            }
+            if (keyCombination.length === 2) {
               evt.preventDefault();
 
               const createComment = (image) => {
@@ -123,10 +131,9 @@ export class MovieController {
                 textaria.disabled = true;
                 this._onDataChangeMain(`add`, this._films.id, obj, this._films.id);
 
-                this._containerPopup.querySelector(`.film-details__add-emoji-label`).innerHTML = ``;
-                textaria.value = ``;
-                textaria.placeholder = `Select reaction below and write comment here`;
-
+                textaria.addEventListener(`focus`, () => {
+                  textaria.style.border = ``;
+                });
               };
 
               let quantityComments = this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML;
@@ -135,16 +142,34 @@ export class MovieController {
             }
           });
 
+
         if (this._films.isHistory) {
           render(getContainer(), this._rating.getElement());
 
           this._rating.getElement()
             .querySelector(`.film-details__user-rating-score`)
             .addEventListener(`click`, (evt) => {
+              const radio = this._rating.getElement().querySelectorAll(`.film-details__user-rating-input`);
+              for (const value of radio) {
+                value.disabled = true;
+              }
+
               if (evt.target.tagName !== `LABEL`) {
                 return;
               }
               entry.ratingFilm = +evt.target.innerHTML;
+
+              this._onDataChangeMain(`updateRating`, entry, this._films, evt.target);
+            });
+
+          this._rating.getElement()
+            .querySelector(`.film-details__watched-reset`)
+            .addEventListener(`click`, () => {
+              const ratingElements = this._rating.getElement().querySelectorAll(`.film-details__user-rating-input`);
+              for (const value of ratingElements) {
+                value.removeAttribute(`checked`);
+              }
+              entry.ratingFilm = 0;
             });
 
         }
@@ -215,6 +240,10 @@ export class MovieController {
         entry.isHistory = this._films.isHistory ? false : true;
         if (document.querySelector(`.film-details__user-rating-wrap`)) {
           containerRating.innerHTML = ``;
+          const ratingElements = this._rating.getElement().querySelectorAll(`.film-details__user-rating-input`);
+          for (const value of ratingElements) {
+            value.removeAttribute(`checked`);
+          }
           entry.ratingFilm = 0;
         } else {
           render(getContainer(), this._rating.getElement());
@@ -225,6 +254,16 @@ export class MovieController {
                 return;
               }
               entry.ratingFilm = +evt.target.innerHTML;
+            });
+
+          this._rating.getElement()
+            .querySelector(`.film-details__watched-reset`)
+            .addEventListener(`click`, () => {
+              const ratingElements = this._rating.getElement().querySelectorAll(`.film-details__user-rating-input`);
+              for (const value of ratingElements) {
+                value.removeAttribute(`checked`);
+              }
+              entry.ratingFilm = 0;
             });
         }
         document.addEventListener(`keydown`, onEscKeyDown);

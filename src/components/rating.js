@@ -1,6 +1,6 @@
-import {AbstractComponent} from './absctract-component.js';
+import AbstractComponent from './absctract-component.js';
 
-export class Rating extends AbstractComponent {
+export default class Rating extends AbstractComponent {
   constructor({title, nameImage, ratingFilm}) {
     super();
     this._title = title;

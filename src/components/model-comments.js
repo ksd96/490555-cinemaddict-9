@@ -1,4 +1,4 @@
-export class ModelComments {
+export default class ModelComments {
   constructor(data) {
     this.id = data[`id`];
     this.image = `./images/emoji/${data[`emotion`]}.png`;

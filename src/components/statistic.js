@@ -1,13 +1,17 @@
-import {AbstractComponent} from './absctract-component.js';
+import AbstractComponent from './absctract-component.js';
 
-export class Statistic extends AbstractComponent {
+export default class Statistic extends AbstractComponent {
+  constructor(rank) {
+    super();
+    this._rank = rank;
+  }
 
   getTemplate() {
     return `<section class="statistic visually-hidden">
       <p class="statistic__rank">
         Your rank
         <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-        <span class="statistic__rank-label">Sci-Fighter</span>
+        <span class="statistic__rank-label">${this._rank}</span>
       </p>
 
       <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">

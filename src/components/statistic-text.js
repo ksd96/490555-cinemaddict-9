@@ -1,6 +1,6 @@
-import {AbstractComponent} from './absctract-component.js';
+import AbstractComponent from './absctract-component.js';
 
-export class StatisticText extends AbstractComponent {
+export default class StatisticText extends AbstractComponent {
   constructor(statisticWatched, statisticDuration, statisticGenre) {
     super();
     this._statisticWatched = statisticWatched;

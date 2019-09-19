@@ -1,16 +1,17 @@
-import {Statistic} from "../components/statistic";
-import {StatisticChart} from "../components/statistic-chart";
+import Statistic from "../components/statistic";
+import StatisticChart from "../components/statistic-chart";
 import {render} from "../components/utils";
-import {StatisticText} from "../components/statistic-text";
+import StatisticText from "../components/statistic-text";
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-export class StatisticController {
-  constructor(container, films) {
+export default class StatisticController {
+  constructor(container, films, rank) {
     this._container = container;
     this._films = films;
+    this._rank = rank;
 
-    this._statistic = new Statistic();
+    this._statistic = new Statistic(this._rank);
   }
 
   _getArrayFilms(number) {
@@ -151,7 +152,6 @@ export class StatisticController {
       };
 
       const container = this._statistic.getElement().querySelector(`.statistic__chart`);
-      // eslint-disable-next-line no-unused-vars
       const genresChart = new Chart(container, {
         plugins: [ChartDataLabels],
         type: `horizontalBar`,

@@ -1,7 +1,7 @@
-import {Comments} from '../components/film-details-comments.js';
+import Comments from '../components/film-details-comments.js';
 import {render} from '../components/utils.js';
 
-export class CommentsController {
+export default class CommentsController {
   constructor(arrayComments, containerPopup, onDataChangeMain, idFilm) {
     this._arrayComments = arrayComments;
     this._containerPopup = containerPopup;
@@ -17,6 +17,8 @@ export class CommentsController {
     comment.getElement()
       .querySelector(`.film-details__comment-delete`)
       .addEventListener(`click`, (evt) => {
+        evt.target.innerHTML = `Deleting…`;
+        evt.target.disabled = true;
         evt.preventDefault();
 
         const obj = {
@@ -25,9 +27,7 @@ export class CommentsController {
           date: comments.date,
         };
 
-        this._onDataChangeMain(`delete`, comments.id, obj, this._idFilm);
-
-        document.querySelector(`.film-details__comments-list`).innerHTML = ``;
+        this._onDataChangeMain(`delete`, comments.id, obj, this._idFilm, evt.target);
 
         let quantityComments = this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML;
         this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML = `${+quantityComments - 1}`;

@@ -1,6 +1,6 @@
-import {AbstractComponent} from './absctract-component.js';
+import AbstractComponent from './absctract-component.js';
 
-export class ExtraContainer extends AbstractComponent {
+export default class ExtraContainer extends AbstractComponent {
   constructor(sectionClass, title) {
     super();
     this._sectionClass = sectionClass;

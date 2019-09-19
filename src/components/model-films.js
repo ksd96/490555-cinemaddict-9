@@ -1,4 +1,4 @@
-export class ModelFilms {
+export default class ModelFilms {
   constructor(data) {
     this.id = data[`id`];
     this.arrayComments = data[`comments`];
