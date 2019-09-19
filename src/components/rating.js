@@ -1,6 +1,6 @@
-import {AbstractComponent} from './absctract-component.js';
+import AbstractComponent from './absctract-component.js';
 
-export class Rating extends AbstractComponent {
+export default class Rating extends AbstractComponent {
   constructor({title, nameImage, ratingFilm}) {
     super();
     this._title = title;
@@ -16,7 +16,7 @@ export class Rating extends AbstractComponent {
 
     <div class="film-details__user-score">
       <div class="film-details__user-rating-poster">
-        <img src="./images/posters/${this._nameImage}" alt="film-poster" class="film-details__user-rating-img">
+        <img src="${this._nameImage}" alt="film-poster" class="film-details__user-rating-img">
       </div>
 
       <section class="film-details__user-rating-inner">

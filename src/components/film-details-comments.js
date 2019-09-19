@@ -1,11 +1,13 @@
-import {AbstractComponent} from './absctract-component.js';
+import AbstractComponent from './absctract-component.js';
+import moment from 'moment';
 
-export class Comments extends AbstractComponent {
-  constructor({image, text, author}) {
+export default class Comments extends AbstractComponent {
+  constructor({image, text, author, date}) {
     super();
     this._image = image;
     this._text = text;
     this._author = author;
+    this._date = date;
   }
 
   getTemplate() {
@@ -17,7 +19,7 @@ export class Comments extends AbstractComponent {
         <p class="film-details__comment-text">${this._text}</p>
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${this._author}</span>
-          <span class="film-details__comment-day">3 days ago</span>
+          <span class="film-details__comment-day">${moment(this._date).startOf(`day`).fromNow()}</span>
           <button class="film-details__comment-delete">Delete</button>
         </p>
       </div>

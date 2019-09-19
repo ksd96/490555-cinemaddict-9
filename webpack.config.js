@@ -1,5 +1,5 @@
-// eslint-disable-next-line strict
 const path = require(`path`);
+const MomentLocalesPlugin = require(`moment-locales-webpack-plugin`);
 // eslint-disable-next-line no-undef
 const outputFile = path.join(__dirname, `public`);
 
@@ -16,5 +16,10 @@ module.exports = {
     publicPath: `http://localhost:8080/`,
     compress: true,
     watchContentBase: true
-  }
+  },
+  plugins: [
+    new MomentLocalesPlugin({
+      localesToKeep: [`es-us`],
+    }),
+  ],
 };
