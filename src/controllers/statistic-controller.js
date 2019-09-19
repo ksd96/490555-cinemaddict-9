@@ -152,26 +152,31 @@ export default class StatisticController {
       };
 
       const container = this._statistic.getElement().querySelector(`.statistic__chart`);
-      const genresChart = new Chart(container, {
-        plugins: [ChartDataLabels],
-        type: `horizontalBar`,
-        data: {
-          labels: getGenresLabels(),
-          datasets: [{
-            data: getGenresData(),
-            backgroundColor: `yellow`,
-            lineTension: 0,
-            pointRadius: 8,
-            pointHoverRadius: 8,
-            pointBackgroundColor: `#ffffff`
-          }]
-        },
-        options: {
-          legend: {
-            display: false
+      const getGenresChart = () => {
+        const genresChart = new Chart(container, {
+          plugins: [ChartDataLabels],
+          type: `horizontalBar`,
+          data: {
+            labels: getGenresLabels(),
+            datasets: [{
+              data: getGenresData(),
+              backgroundColor: `yellow`,
+              lineTension: 0,
+              pointRadius: 8,
+              pointHoverRadius: 8,
+              pointBackgroundColor: `#ffffff`
+            }]
           },
-        }
-      });
+          options: {
+            legend: {
+              display: false
+            },
+          }
+        });
+        return genresChart;
+      };
+      getGenresChart();
     }
   }
 }
+
