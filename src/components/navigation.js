@@ -1,15 +1,11 @@
-import {AbstractComponent} from './absctract-component.js';
-import {PageController} from '../controllers/page.js';
-import {api} from '../main.js';
+import AbstractComponent from './absctract-component.js';
 
-export class Navigation extends AbstractComponent {
-  constructor(countWatchlist, countHistory, countFavorites, body, main) {
+export default class Navigation extends AbstractComponent {
+  constructor(countWatchlist, countHistory, countFavorites) {
     super();
     this._countWatchlist = countWatchlist;
     this._countHistory = countHistory;
     this._countFavorites = countFavorites;
-    this._body = body;
-    this._main = main;
   }
 
   getTemplate() {
@@ -21,43 +17,4 @@ export class Navigation extends AbstractComponent {
       <a href="#stats" class="main-navigation__item main-navigation__item--additional">Stats</a>
     </nav>`;
   }
-
-  _renderOtherFilms(array) {
-    const onDataChange = (actionType, update, old) => {
-      switch (actionType) {
-        case `update`:
-          api.updateFilm({
-            id: update.id,
-            data: update
-          });
-          api.getFilms().then((filmss) => {
-            const id = update.id;
-            page._onDataChange(filmss[id], old, true);
-          });
-          break;
-        case `add`:
-          api.createComment({
-            id: update,
-            data: old,
-          });
-          break;
-      }
-    };
-    const page = new PageController(this._body, this._main, array, ``, false, onDataChange);
-    page._unrenderSort();
-    page._renderSort();
-    page.init();
-
-    if (array.length > 5) {
-      page._renderLoadMore();
-    }
-  }
-
-  changeFocus(navType) {
-    const a = this.getElement().querySelector(`.main-navigation__item--active`);
-    const b = this.getElement().querySelector(`.main-navigation__item--${navType}`);
-    a.classList.remove(`main-navigation__item--active`);
-    b.classList.add(`main-navigation__item--active`);
-  }
 }
-

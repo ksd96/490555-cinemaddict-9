@@ -1,8 +1,8 @@
-import {AbstractComponent} from './absctract-component.js';
+import AbstractComponent from './absctract-component.js';
 import moment from 'moment';
 
-export class FilmDetails extends AbstractComponent {
-  constructor({title, rating, nameImage, director, duration, writers, actors, date, country, genres, description, isWatchlist, isHistory, isFavorites, arrayComments}) {
+export default class FilmDetails extends AbstractComponent {
+  constructor({title, rating, ageRating, nameImage, director, duration, writers, actors, date, country, genres, description, isWatchlist, isHistory, isFavorites, arrayComments}) {
     super();
     this._title = title;
     this._rating = rating;
@@ -19,6 +19,7 @@ export class FilmDetails extends AbstractComponent {
     this._relaeseDate = date;
     this._country = country;
     this._arrayComments = arrayComments;
+    this._ageRating = ageRating;
   }
 
   getTemplate() {
@@ -32,7 +33,7 @@ export class FilmDetails extends AbstractComponent {
           <div class="film-details__poster">
             <img class="film-details__poster-img" src="${this._nameImage}" alt="">
 
-            <p class="film-details__age">18+</p>
+            <p class="film-details__age">${this._ageRating}+</p>
           </div>
 
           <div class="film-details__info">
@@ -62,7 +63,7 @@ export class FilmDetails extends AbstractComponent {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${moment(this._relaeseDate).format(`LL`)}</td>
+                <td class="film-details__cell">${moment(this._relaeseDate).format(`DD MMMM YYYY`)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
@@ -79,7 +80,7 @@ export class FilmDetails extends AbstractComponent {
               </tr>
             </table>
 
-            <p class="film-details__film-description">${this._description}</p>
+            <p class="film-details__film-description">${(this._description.length < 140) ? this._description : `${this._description.slice(0, 139)}...`}</p>
           </div>
         </div>
 

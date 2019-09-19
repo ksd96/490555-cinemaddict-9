@@ -1,6 +1,6 @@
-import {AbstractComponent} from './absctract-component.js';
+import AbstractComponent from './absctract-component.js';
 
-export class ResultCount extends AbstractComponent {
+export default class ResultCount extends AbstractComponent {
   constructor(count) {
     super();
     this._count = count;

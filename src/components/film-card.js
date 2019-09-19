@@ -1,7 +1,7 @@
-import {AbstractComponent} from './absctract-component.js';
+import AbstractComponent from './absctract-component.js';
 import moment from 'moment';
 
-export class Film extends AbstractComponent {
+export default class Film extends AbstractComponent {
   constructor({title, rating, date, duration, genres, nameImage, description, comments, isWatchlist, isHistory, isFavorites, arrayComments}) {
     super();
     this._title = title;

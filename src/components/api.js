@@ -1,5 +1,5 @@
-import {ModelFilms} from './model-films.js';
-import {ModelComments} from './model-comments.js';
+import ModelFilms from './model-films.js';
+import ModelComments from './model-comments.js';
 import moment from 'moment';
 
 const Method = {
@@ -23,7 +23,7 @@ const toJSON = (response) => {
 };
 
 
-export class API {
+export default class API {
   constructor({endPoint, authorization}) {
     this._endPoint = endPoint;
     this._authorization = authorization;
@@ -100,12 +100,10 @@ export class API {
       .then(ModelFilms.parseTask);
   }
 
-  deleteComment({id, data}) {
+  deleteComment({id}) {
     return this._load({
       url: `comments/${id}`,
       method: `DELETE`,
-      body: JSON.stringify(this.toRAWComment(data)),
-      headers: new Headers({'Content-Type': `application/json`}),
     });
   }
 
@@ -115,7 +113,6 @@ export class API {
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.error(`fetch error: ${err}`);
         throw err;
       });

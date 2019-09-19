@@ -1,6 +1,6 @@
-import {AbstractComponent} from './absctract-component.js';
+import AbstractComponent from './absctract-component.js';
 
-export class StatisticChart extends AbstractComponent {
+export default class StatisticChart extends AbstractComponent {
 
   getTemplate() {
     return `<div class="statistic__chart-wrap">

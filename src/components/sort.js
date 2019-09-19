@@ -1,6 +1,6 @@
-import {AbstractComponent} from './absctract-component.js';
+import AbstractComponent from './absctract-component.js';
 
-export class Sort extends AbstractComponent {
+export default class Sort extends AbstractComponent {
   getTemplate() {
     return `<ul class="sort">
       <li><a href="#" class="sort__button sort__button--default sort__button--active">Sort by default</a></li>

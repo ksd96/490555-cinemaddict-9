@@ -1,12 +1,12 @@
-import {Search} from '../components/search.js';
+import Search from '../components/search.js';
 import {render} from '../components/utils.js';
-import {SectionFilms} from '../components/section-films.js';
-import {ResultCount} from '../components/search-result-count.js';
-import {PageController} from './page.js';
-import {arrayNavigation} from '../components/data-navigation.js';
+import SectionFilms from '../components/section-films.js';
+import ResultCount from '../components/search-result-count.js';
+import PageController from './page.js';
 import {api} from '../main.js';
+import {onDataChange} from '../components/on-data-change.js';
 
-export class SearchController {
+export default class SearchController {
   constructor(container, containerResult) {
     this._container = container;
     this._containerResult = containerResult;
@@ -22,25 +22,8 @@ export class SearchController {
 
     const searchFilms = () => {
       api.getFilms().then((films) => {
-        const onDataChange = (actionType, update, old) => {
-          switch (actionType) {
-            case `update`:
-              api.updateFilm({
-                id: update.id,
-                data: update
-              });
-              api.getFilms().then((filmss) => {
-                const id = update.id;
-                page._onDataChange(filmss[id], old);
-              });
-              break;
-            case `add`:
-              api.createComment({
-                id: update,
-                data: old,
-              });
-              break;
-          }
+        const scanRenderOnDateChange = (actionType, update, old, unit, evt) => {
+          return onDataChange(actionType, update, old, unit, evt, page, body);
         };
 
         const textariaValue = search.getElement().querySelector(`.search__field`).value.trim();
@@ -48,8 +31,7 @@ export class SearchController {
         const searchResult = new SectionFilms();
         render(this._containerResult, searchResult.getElement());
 
-        const page = new PageController(body, this._containerResult, arrayResult, ``, true, onDataChange);
-
+        const page = new PageController(body, this._containerResult, arrayResult, true, scanRenderOnDateChange, `all`);
         for (const value of films) {
           if (value.title.trim().toLowerCase().search(textariaValue) !== -1) {
             arrayResult.push(value);
@@ -84,34 +66,17 @@ export class SearchController {
       this._containerResult.innerHTML = ``;
 
       api.getFilms().then((films) => {
-        const onDataChange = (actionType, update, old) => {
-          switch (actionType) {
-            case `update`:
-              api.updateFilm({
-                id: update.id,
-                data: update
-              });
-              api.getFilms().then((filmss) => {
-                const id = update.id;
-                pageController._onDataChange(filmss[id], old);
-              });
-              break;
-            case `add`:
-              api.createComment({
-                id: update,
-                data: old,
-              });
-              break;
-          }
+        const scanRenderBackOnDateChange = (actionType, update, old, unit, evt) => {
+          return onDataChange(actionType, update, old, unit, evt, pageController, body);
         };
+
         const searchResult = new SectionFilms();
-        const pageController = new PageController(body, this._containerResult, films, arrayNavigation, false, onDataChange);
-        pageController._renderNavigation();
+        const pageController = new PageController(body, this._containerResult, films, false, scanRenderBackOnDateChange, `all`);
+        pageController._renderNavigation(`all`);
         pageController._renderSort();
         render(this._containerResult, searchResult.getElement());
         pageController.init();
         pageController._renderLoadMore();
-        pageController._renderStatistic();
       });
     };
 

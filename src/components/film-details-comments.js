@@ -1,7 +1,7 @@
-import {AbstractComponent} from './absctract-component.js';
+import AbstractComponent from './absctract-component.js';
 import moment from 'moment';
 
-export class Comments extends AbstractComponent {
+export default class Comments extends AbstractComponent {
   constructor({image, text, author, date}) {
     super();
     this._image = image;
