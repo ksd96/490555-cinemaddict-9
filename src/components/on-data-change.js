@@ -1,7 +1,7 @@
 import {api} from "../main";
-import CommentsController from "../controllers/comments";
+import CommentsController from "../controllers/comments-controller";
 
-export const onDataChange = (actionType, update, old, unit, evt, pageController, body) => {
+export const onDataChange = (actionType, update, old, unit, evt, pageController) => {
   const shake = (element) => {
     const ANIMATION_TIMEOUT = 600;
     element.style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
@@ -56,6 +56,7 @@ export const onDataChange = (actionType, update, old, unit, evt, pageController,
         document.querySelector(`.film-details__comments-list`).innerHTML = ``;
         api.getComments(unit)
           .then((comments) => {
+            const body = document.querySelector(`body`);
             const commentsController = new CommentsController(comments, body, onDataChange, unit);
             commentsController.init();
           });
@@ -79,6 +80,7 @@ export const onDataChange = (actionType, update, old, unit, evt, pageController,
         document.querySelector(`.film-details__comments-list`).innerHTML = ``;
         api.getComments(unit)
           .then((comments) => {
+            const body = document.querySelector(`body`);
             const commentsController = new CommentsController(comments, body, onDataChange, unit);
             commentsController.init();
           });

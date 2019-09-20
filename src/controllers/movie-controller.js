@@ -1,8 +1,8 @@
 import {render, unrender} from '../components/utils.js';
-import Film from '../components/film-card.js';
+import Film from '../components/film.js';
 import FilmDetails from '../components/film-details.js';
 import Rating from '../components/rating.js';
-import CommentsController from './comments.js';
+import CommentsController from './comments-controller.js';
 import {api} from '../main.js';
 
 const body = document.querySelector(`body`);
@@ -109,7 +109,7 @@ export default class MovieController {
         this._filmDetails.getElement()
           .querySelector(`.film-details__comment-input`)
           .addEventListener(`keydown`, (evt) => {
-            if (evt.key === `Control` && keyCombination.length === 0) {
+            if (evt.ctrlKey && keyCombination.length === 0 || evt.key === `Meta` && keyCombination.length === 0) {
               keyCombination.push(evt.key);
             } else if (evt.key === `Enter` && keyCombination.length === 1) {
               keyCombination.push(evt.key);
@@ -192,7 +192,9 @@ export default class MovieController {
       .addEventListener(`click`, () => {
         unrender(this._filmDetails.getElement());
         commentsList.innerHTML = ``;
-        containerRating.innerHTML = ``;
+        if (containerRating) {
+          containerRating.innerHTML = ``;
+        }
         document.removeEventListener(`keydown`, onEscKeyDown);
         this._onDataChangeMain(`update`, entry, this._films);
       });

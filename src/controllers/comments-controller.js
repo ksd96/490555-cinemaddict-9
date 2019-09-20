@@ -1,4 +1,4 @@
-import Comments from '../components/film-details-comments.js';
+import Comments from '../components/comments.js';
 import {render} from '../components/utils.js';
 
 export default class CommentsController {
