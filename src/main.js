@@ -1,6 +1,6 @@
 import {render} from './components/utils.js';
-import PageController from './controllers/page.js';
-import SearchController from './controllers/scan.js';
+import PageController from './controllers/page-controller.js';
+import SearchController from './controllers/search-controller.js';
 import SectionFilms from './components/section-films.js';
 import API from './components/api.js';
 import {onDataChange} from './components/on-data-change.js';
@@ -24,12 +24,7 @@ api.getFilms().then((films) => {
   main.innerHTML = ``;
   const pageController = new PageController(body, main, films, false, mainOnDateChange, `all`);
   render(main, sectionFilms.getElement());
-  pageController._renderSort();
-  pageController._renderStatistic();
-  pageController._renderNavigation(`all`);
-  pageController.init();
-  pageController._renderLoadMore();
-  pageController._renderProfile();
+  pageController.initMain();
 
   footerCount.innerHTML = `<p>${films.length} movies inside</p>`;
 });

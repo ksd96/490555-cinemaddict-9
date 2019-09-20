@@ -1,8 +1,8 @@
 import Search from '../components/search.js';
 import {render} from '../components/utils.js';
 import SectionFilms from '../components/section-films.js';
-import ResultCount from '../components/search-result-count.js';
-import PageController from './page.js';
+import ResultCount from '../components/result-count.js';
+import PageController from './page-controller.js';
 import {api} from '../main.js';
 import {onDataChange} from '../components/on-data-change.js';
 
@@ -23,7 +23,7 @@ export default class SearchController {
     const searchFilms = () => {
       api.getFilms().then((films) => {
         const scanRenderOnDateChange = (actionType, update, old, unit, evt) => {
-          return onDataChange(actionType, update, old, unit, evt, page, body);
+          return onDataChange(actionType, update, old, unit, evt, page);
         };
 
         const textariaValue = search.getElement().querySelector(`.search__field`).value.trim();
@@ -43,15 +43,15 @@ export default class SearchController {
         if (arrayResult.length !== 0) {
           render(this._containerResult, resultCount.getElement());
           render(this._containerResult, searchResult.getElement());
-          page._renderBoard();
+          page.renderBoard();
           if (arrayResult.length > 5) {
-            page._renderLoadMore();
+            page.renderLoadMore();
           }
         } else {
           render(this._containerResult, resultCount.getElement());
           render(this._containerResult, searchResult.getElement());
-          page._getContainerFilms();
-          page._unrenderLoadMore();
+          page.getContainerFilms();
+          page.unrenderLoadMore();
           const filmContainer = this._containerResult.querySelector(`.films-list__container`);
           filmContainer.classList.add(`no-result`);
           filmContainer.classList.remove(`films-list__container`);
@@ -67,16 +67,13 @@ export default class SearchController {
 
       api.getFilms().then((films) => {
         const scanRenderBackOnDateChange = (actionType, update, old, unit, evt) => {
-          return onDataChange(actionType, update, old, unit, evt, pageController, body);
+          return onDataChange(actionType, update, old, unit, evt, pageController);
         };
 
         const searchResult = new SectionFilms();
         const pageController = new PageController(body, this._containerResult, films, false, scanRenderBackOnDateChange, `all`);
-        pageController._renderNavigation(`all`);
-        pageController._renderSort();
         render(this._containerResult, searchResult.getElement());
-        pageController.init();
-        pageController._renderLoadMore();
+        pageController.initScan();
       });
     };
 

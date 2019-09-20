@@ -1,6 +1,6 @@
 import Navigation from "../components/navigation";
 import {api} from "../main";
-import PageController from "./page";
+import PageController from "./page-controller";
 import {onDataChange} from "../components/on-data-change";
 
 export default class NavigationController {
@@ -29,19 +29,11 @@ export default class NavigationController {
 
   _renderOtherFilms(array, categoryFocus) {
     const navOnDateChange = (actionType, update, old, unit, evt) => {
-      return onDataChange(actionType, update, old, unit, evt, page, this._body);
+      return onDataChange(actionType, update, old, unit, evt, page);
     };
 
     const page = new PageController(this._body, this._main, array, false, navOnDateChange, categoryFocus);
-    page._unrenderSort();
-    page._renderSort();
-    page.init();
-    page._unrenderStatistic();
-    page._renderStatistic();
-
-    if (array.length > 5) {
-      page._renderLoadMore();
-    }
+    page.initNav();
   }
 
   _changeFocus(navType) {
