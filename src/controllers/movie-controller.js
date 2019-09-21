@@ -103,6 +103,27 @@ export default class MovieController {
             container.append(image);
           };
           addEmoji(emoji);
+          // ------------------------------------------
+          const createComment = (image) => {
+            const textaria = this._containerPopup.querySelector(`.film-details__comment-input`);
+
+            const obj = {
+              image: image.getAttribute(`id`),
+              text: textaria.value,
+              date: Date.now(),
+            };
+
+            textaria.disabled = true;
+            this._onDataChangeMain(`add`, this._films.id, obj, this._films.id);
+
+            textaria.addEventListener(`focus`, () => {
+              textaria.style.border = ``;
+            });
+          };
+
+          let quantityComments = this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML;
+          this._containerPopup.querySelector(`.film-details__comments-count`).innerHTML = `${+quantityComments + 1}`;
+          createComment(emoji);
 
         });
 

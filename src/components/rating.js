@@ -1,4 +1,4 @@
-import AbstractComponent from './absctract-component.js';
+import AbstractComponent from './abstract-component.js';
 
 export default class Rating extends AbstractComponent {
   constructor({title, nameImage, ratingFilm}) {
